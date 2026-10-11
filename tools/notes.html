@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Notes</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07090d;
+        --text: #e8eefc;
+        --muted: #94a3b8;
+        --accent: #818cf8;
+        --line: rgba(148, 163, 184, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: clamp(1rem, 4vw, 2rem);
+        background: radial-gradient(70% 60% at 50% 0%, rgba(129, 140, 248, 0.14), transparent 70%), var(--bg);
+        color: var(--text);
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .label {
+        font-size: 0.72rem;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      h1 {
+        margin-top: 0.3rem;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        font-size: 1.5rem;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      #status {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      button {
+        padding: 0.55rem 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        border-color: rgba(129, 140, 248, 0.6);
+      }
+
+      textarea {
+        flex: 1;
+        min-height: 320px;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        outline: none;
+        resize: none;
+      }
+
+      textarea:focus {
+        border-color: rgba(129, 140, 248, 0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <p class="label">Quick Notes</p>
+        <h1>Scratch space</h1>
+      </div>
+      <div class="actions">
+        <span id="status">Saved</span>
+        <button id="copyButton" type="button">Copy</button>
+        <button id="clearButton" type="button">Clear</button>
+      </div>
+    </header>
+    <textarea id="notes" placeholder="Start writing…" spellcheck="true"></textarea>
+    <script>
+      const notes = document.querySelector("#notes");
+      const status = document.querySelector("#status");
+      const storageKey = "tool-hub-jax.notes.v1";
+      let saveTimer;
+
+      notes.value = localStorage.getItem(storageKey) || "";
+
+      notes.addEventListener("input", () => {
+        status.textContent = "Saving…";
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          localStorage.setItem(storageKey, notes.value);
+          status.textContent = "Saved";
+        }, 300);
+      });
+
+      document.querySelector("#clearButton").addEventListener("click", () => {
+        if (!notes.value || !window.confirm("Clear your notes?")) return;
+        notes.value = "";
+        localStorage.removeItem(storageKey);
+        status.textContent = "Cleared";
+        notes.focus();
+      });
+
+      document.querySelector("#copyButton").addEventListener("click", async () => {
+        if (!notes.value) return;
+        try {
+          await navigator.clipboard.writeText(notes.value);
+          status.textContent = "Copied";
+        } catch {
+          status.textContent = "Copy blocked";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Tool Hub Jax — a fast, focused home for the tools you use every day." />
+    <title>Tool Hub Jax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-glow" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Tool Hub Jax home">
+        <span class="brand-mark">JX</span>
+        <span class="brand-text">
+          <strong>Tool Hub</strong>
+          <small>by Jax</small>
+        </span>
+      </a>
+
+      <div class="topbar-actions">
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <span class="sr-only">Search tools</span>
+          <input id="searchInput" type="search" placeholder="Search tools" autocomplete="off" />
+        </label>
+
+        <button class="button button-primary" id="addToolButton" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Add tool
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="eyebrow">One hub. Every tool.</p>
+        <h1>
+          Your working <span>tool room</span>, ready when you are.
+        </h1>
+        <p class="hero-copy">
+          Pin the tools you actually use, keep them in one calm place, and open them right inside
+          Tool Hub without losing your flow.
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <strong id="statTools">0</strong>
+            <span>tools ready</span>
+          </div>
+          <div class="stat">
+            <strong id="statCategories">0</strong>
+            <span>categories</span>
+          </div>
+          <div class="stat">
+            <strong id="statCustom">0</strong>
+            <span>added by you</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-labelledby="workspaceTitle">
+        <div class="workspace-head">
+          <div>
+            <p class="eyebrow">Workspace</p>
+            <h2 id="workspaceTitle">Tools</h2>
+          </div>
+          <div class="filters" id="categoryFilters" role="group" aria-label="Filter tools by category"></div>
+        </div>
+
+        <div class="tool-grid" id="toolGrid"></div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <h3>No tools match that search</h3>
+          <p>Try another word, or add a new tool to your hub.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Tool Hub Jax</p>
+      <p>Built for fast, focused work.</p>
+    </footer>
+
+    <div class="viewer" id="viewer" hidden aria-hidden="true">
+      <div class="viewer-backdrop" data-close-viewer></div>
+      <section class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+        <header class="viewer-header">
+          <div class="viewer-identity">
+            <span class="viewer-badge" id="viewerBadge">TL</span>
+            <div>
+              <h2 id="viewerTitle">Tool</h2>
+              <p id="viewerUrl"></p>
+            </div>
+          </div>
+          <div class="viewer-actions">
+            <a class="button button-ghost" id="viewerExternal" href="#" target="_blank" rel="noreferrer">
+              Open in new tab
+            </a>
+            <button class="icon-button" id="closeViewerButton" type="button" aria-label="Close tool viewer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="viewer-frame-wrap">
+          <div class="viewer-loader" id="viewerLoader">Loading tool…</div>
+          <iframe id="toolFrame" title="Embedded tool" allow="clipboard-read; clipboard-write; fullscreen" referrerpolicy="no-referrer"></iframe>
+          <p class="viewer-note">
+            Blank screen? Some sites block embedding. Use “Open in new tab” instead.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal" id="toolModal" hidden aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow" id="modalEyebrow">New tool</p>
+            <h2 id="modalTitle">Add a tool</h2>
+          </div>
+          <button class="icon-button" id="closeModalButton" type="button" aria-label="Close add tool form">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </header>
+
+        <form class="tool-form" id="toolForm">
+          <input id="toolId" type="hidden" />
+          <label class="field">
+            <span>Tool name</span>
+            <input id="toolName" type="text" required maxlength="60" placeholder="e.g. Focus Timer" />
+          </label>
+          <label class="field">
+            <span>Embed URL</span>
+            <input id="toolUrl" type="text" required placeholder="https://example.com/tool" />
+          </label>
+          <label class="field">
+            <span>Description</span>
+            <textarea id="toolDescription" rows="3" maxlength="140" placeholder="What does this tool do?"></textarea>
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span>Category</span>
+              <select id="toolCategory">
+                <option>Productivity</option>
+                <option>AI</option>
+                <option>Media</option>
+                <option>Data</option>
+                <option>Design</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label class="field field-color">
+              <span>Accent</span>
+              <input id="toolAccent" type="color" value="#5eead4" />
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="button button-ghost" id="cancelModalButton" type="button">Cancel</button>
+            <button class="button button-primary" type="submit">Save tool</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
