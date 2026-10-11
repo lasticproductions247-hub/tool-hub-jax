@@ -2,6 +2,15 @@ const STORAGE_KEY = "tool-hub-jax.tools.v1";
 
 const BUILT_IN_TOOLS = [
   {
+    id: "builtin-toolboard",
+    name: "Toolboard",
+    description: "Your Perchance Toolboard app, right inside the hub.",
+    url: "https://null.perchance.org/85q207r2n8#toolsGrid",
+    category: "Apps",
+    accent: "#facc15",
+    builtIn: true,
+  },
+  {
     id: "builtin-clock",
     name: "Focus Clock",
     description: "A clean live clock and date for your desk.",
